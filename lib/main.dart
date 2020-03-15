@@ -1,12 +1,13 @@
 import 'package:ecoop_web/repository/repository.dart';
+import 'package:ecoop_web/widgets/persona_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'blocs/blocs.dart';
 import 'blocs/ecoop/ecoop.dart';
 import 'home_page.dart';
 
 void main() {
-
   final PersonasRepository repository = PersonasApiRepository();
 
   runApp(App(
@@ -24,69 +25,116 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Quote App',
-      home: HomeScreen(repository: repository),
+      title: 'eCoop',
+      home: MultiBlocProvider(providers: [
+        BlocProvider(
+          create: (context) => EcoopBloc(ecoopRepository: repository),
+        ),
+        BlocProvider(
+          create: (context) => PersonasSearchBloc(ecoopRepository: repository),
+        )
+      ], child: HomeScreen()),
     );
   }
 }
 
 class HomeScreen extends StatelessWidget {
-    final PersonasRepository repository;
-
-    HomeScreen({Key key, @required this.repository})
-      : assert(repository != null),
-        super(key: key);
+  HomeScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Quote'),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search), 
+      appBar: AppBar(
+        title: Text('Quote'),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.search),
               onPressed: () {
-              showSearch(context: context, delegate: DataSearch());
-            })
-          ],
-        ),
-        body: BlocProvider(
-          create: (context) => EcoopBloc(ecoopRepository: repository),
-          child: HomePage(),
-        ),
-      );
+                showSearch(
+                    context: context,
+                    delegate:
+                        DataSearch(BlocProvider.of<PersonasSearchBloc>(context)));
+              })
+        ],
+      ),
+      body: BlocProvider(
+        create: (context) => BlocProvider.of<EcoopBloc>(context),
+        child: HomePage(),
+      ),
+    );
   }
-
 }
 
 class DataSearch extends SearchDelegate<String> {
+  final PersonasSearchBloc personasSearchBloc;
+
+  DataSearch(this.personasSearchBloc);
+
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: (){})];
+    return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow, 
-        progress: transitionAnimation
-        ), 
-        onPressed: (){});
+        icon: AnimatedIcon(
+            icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
+        onPressed: () {
+          close(context, null);
+        });
   }
 
   @override
   Widget buildResults(BuildContext context) {
+    personasSearchBloc.add(GetPersonasEvent(query));
+
+    return BlocBuilder(
+      bloc: personasSearchBloc,
+      builder: (BuildContext context, PersonasSearchState state) {
+        if (state.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (state.hasError) {
+          return Container(
+            child: Text('Error'),
+          );
+        }
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            return PersonaItem(
+              persona: state.personas[index],
+              onTap: () => close(context, state.personas[index].id),
+            );
+          },
+          itemCount: state.personas.length,
+        );
+      },
+    );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return ListView(children:<Widget>[
-      ListTile(title: Text('Horse')),
-      ListTile(title: Text('Cat')),
-    ]);
-  }
+    personasSearchBloc.add(GetSuggestionEvent());
 
+    return BlocBuilder(
+      bloc: personasSearchBloc,
+      builder: (BuildContext context, PersonasSearchState state) {
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            return ListTile(
+              leading: Icon(Icons.history),
+              title: Text(state.suggestion[index]),
+              onTap: () => close(context, state.suggestion[index]),
+            );
+          },
+          itemCount: state.suggestion.length,
+        );
+      },
+    );
+  }
 }
 // class MyApp extends StatelessWidget {
 //   // This widget is the root of your application.
@@ -130,18 +178,18 @@ class DataSearch extends SearchDelegate<String> {
 // }
 
 // class _MyHomePageState extends State<MyHomePage> {
-  // int _counter = 0;
+// int _counter = 0;
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     // This call to setState tells the Flutter framework that something has
-  //     // changed in this State, which causes it to rerun the build method below
-  //     // so that the display can reflect the updated values. If we changed
-  //     // _counter without calling setState(), then the build method would not be
-  //     // called again, and so nothing would appear to happen.
-  //     _counter++;
-  //   });
-  // }
+// void _incrementCounter() {
+//   setState(() {
+//     // This call to setState tells the Flutter framework that something has
+//     // changed in this State, which causes it to rerun the build method below
+//     // so that the display can reflect the updated values. If we changed
+//     // _counter without calling setState(), then the build method would not be
+//     // called again, and so nothing would appear to happen.
+//     _counter++;
+//   });
+// }
 
 //   @override
 //   Widget build(BuildContext context) {
