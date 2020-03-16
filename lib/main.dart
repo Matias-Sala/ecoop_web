@@ -52,8 +52,8 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 showSearch(
                     context: context,
-                    delegate:
-                        DataSearch(BlocProvider.of<PersonasSearchBloc>(context)));
+                    delegate: DataSearch(
+                        BlocProvider.of<PersonasSearchBloc>(context)));
               })
         ],
       ),
@@ -72,7 +72,13 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
+    return [
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            query = '';
+          })
+    ];
   }
 
   @override
@@ -130,7 +136,7 @@ class DataSearch extends SearchDelegate<String> {
               onTap: () => close(context, state.suggestion[index]),
             );
           },
-          itemCount: state.suggestion.length,
+          itemCount: state.suggestion?.length,
         );
       },
     );
