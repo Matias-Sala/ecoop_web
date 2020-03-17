@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quote'),
+        title: Text('Coop. Almafuerte'),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.search),
@@ -123,21 +123,24 @@ class DataSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    personasSearchBloc.add(GetSuggestionEvent());
+    //personasSearchBloc.add(GetSuggestionEvent());
 
     return BlocBuilder(
       bloc: personasSearchBloc,
       builder: (BuildContext context, PersonasSearchState state) {
-        return ListView.builder(
-          itemBuilder: (context, index) {
-            return ListTile(
-              leading: Icon(Icons.history),
-              title: Text(state.suggestion[index]),
-              onTap: () => close(context, state.suggestion[index]),
-            );
-          },
-          itemCount: state.suggestion?.length,
-        );
+        // if (state.suggestion != null) {
+        //   return ListView.builder(
+        //     itemBuilder: (context, index) {
+        //       return ListTile(
+        //         leading: Icon(Icons.history),
+        //         title: Text(state.suggestion[index]),
+        //         onTap: () {query = state.suggestion[index];},
+        //       );
+        //     },
+        //     itemCount: state.suggestion.length,
+        //   );
+        // }
+        return Column();
       },
     );
   }

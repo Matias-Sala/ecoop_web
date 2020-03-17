@@ -51,5 +51,5 @@ class PersonasSearchState {
 
   @override
   String toString() =>
-      'PersonasSearchState {personas: ${personas.toString()}, isLoading: $isLoading, hasError: $hasError }';
+      'PersonasSearchState {personas: ${personas.toString()}, isLoading: $isLoading, hasError: $hasError, suggestion: $suggestion }';
 }
