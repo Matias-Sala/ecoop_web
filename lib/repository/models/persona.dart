@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'models.dart';
 
 class Persona extends Equatable {
-  final String id;
+  final int id;
   final String nombre;
   final String apellido;
   final Direccion direccion;

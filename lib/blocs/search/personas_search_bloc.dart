@@ -41,7 +41,7 @@ class PersonasSearchBloc
   }
 
   Future<List<Persona>> _getSearchResults(String query) async {
-    final personas = await ecoopRepository.personas();
+    final personas = await ecoopRepository.getPersonas();
     return personas
         .where((persona) => (persona.nombre.trim() + persona.apellido.trim())
             .toLowerCase()

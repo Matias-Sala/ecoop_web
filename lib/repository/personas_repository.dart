@@ -8,7 +8,9 @@ abstract class PersonasRepository {
 
   Future<void> deletePersona(Persona persona);
 
-  Future<List<Persona>> personas();
+  Future<Persona> getPersona(int personaId);
+
+  Future<List<Persona>> getPersonas();
 
   Future<void> updatePersona(Persona persona);
 }

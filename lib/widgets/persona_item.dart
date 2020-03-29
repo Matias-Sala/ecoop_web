@@ -40,7 +40,7 @@ class PersonaItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-          key: Key(persona.id),
+          key: Key(persona.id.toString()),
           child: InkWell(
               onTap: () {},
               child: ListTile(

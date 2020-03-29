@@ -22,11 +22,17 @@ class PersonasApiRepository extends PersonasRepository {
   }
 
   @override
-  Future<List<Persona>> personas() {
+  Future<Persona> getPersona(int personaId) {
+    final persona =Persona(personaId, 'Matias', 'Sala', null);
+    return Future.value(persona);
+  }
+
+  @override
+  Future<List<Persona>> getPersonas() {
     
     final personas = [
-      Persona('1', 'Matias', 'Sala', null),
-      Persona('2', 'Ivana', 'Dominguez', null),
+      Persona(1, 'Matias', 'Sala', null),
+      Persona(2, 'Ivana', 'Dominguez', null),
     ];
 
     return Future.value(personas);
